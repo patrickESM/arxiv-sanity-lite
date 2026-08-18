@@ -9,6 +9,46 @@ I am running a live version of this code on [arxiv-sanity-lite.com](https://arxi
 
 #### To run
 
+##### Docker Compose (easiest)
+
+Build and start the application with:
+
+```bash
+docker compose up --build
+```
+
+Then open <http://localhost:5000>. On the first start the container downloads
+the latest 100 matching arXiv papers and computes their TF-IDF features. The
+initial startup can therefore take a few minutes. The database is kept in the
+named Docker volume `arxiv-sanity-data` and is reused on subsequent starts.
+
+The Compose stack also starts an `updater` service. It checks arXiv once after
+the initial feature database is ready and then every 24 hours. If papers have
+changed, it recomputes the TF-IDF features. Both services use `restart:
+unless-stopped`, so they start again automatically with Docker unless they were
+explicitly stopped.
+
+The initial number of papers and the host port can be changed if desired:
+
+```bash
+ARXIV_FETCH_NUM=1000 ARXIV_SANITY_PORT=8080 docker compose up --build
+```
+
+The updater fetches up to 2000 entries per check. Its batch size and interval
+(in seconds) can be changed if desired:
+
+```bash
+ARXIV_UPDATE_FETCH_NUM=1000 ARXIV_UPDATE_INTERVAL=43200 docker compose up -d
+```
+
+Updater activity can be followed with:
+
+```bash
+docker compose logs -f updater
+```
+
+##### Without Docker
+
 To run this locally I usually run the following script to update the database with any new papers. I typically schedule this via a periodic cron job:
 
 ```bash

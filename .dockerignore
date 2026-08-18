@@ -1,0 +1,13 @@
+.git
+.gitignore
+__pycache__
+*.py[cod]
+*.db
+*.p
+.DS_Store
+.ipynb_checkpoints
+data/*
+!data/readme.md
+recco
+tmp
+secret_key.txt
