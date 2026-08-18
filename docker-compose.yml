@@ -27,5 +27,14 @@ services:
       - arxiv-sanity-data:/app/data
     restart: unless-stopped
 
+  topic-importer:
+    image: arxiv-sanity-lite:local
+    profiles: ["tools"]
+    entrypoint: ["python", "import_topics.py"]
+    environment:
+      ARXIV_TOPIC_MAX: "${ARXIV_TOPIC_MAX:-2000}"
+    volumes:
+      - arxiv-sanity-data:/app/data
+
 volumes:
   arxiv-sanity-data:

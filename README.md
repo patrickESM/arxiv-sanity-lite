@@ -53,6 +53,18 @@ Updater activity can be followed with:
 docker compose logs -f updater
 ```
 
+This fork also includes an optional historical topic import for human shape
+and mesh recovery (including Anny-One and BEDLAM), 6DoF object pose
+estimation, and scatter-radiation estimation in medical imaging. It imports
+matching arXiv metadata and recomputes the TF-IDF features when needed:
+
+```bash
+docker compose --profile tools run --rm topic-importer
+```
+
+By default, up to 2000 results are considered per topic. This can be changed
+with `ARXIV_TOPIC_MAX`.
+
 ##### Without Docker
 
 To run this locally I usually run the following script to update the database with any new papers. I typically schedule this via a periodic cron job:
