@@ -1,0 +1,31 @@
+services:
+  arxiv-sanity-lite:
+    image: arxiv-sanity-lite:local
+    build: .
+    ports:
+      - "${ARXIV_SANITY_PORT:-5000}:5000"
+    environment:
+      ARXIV_FETCH_NUM: "${ARXIV_FETCH_NUM:-100}"
+      ARXIV_UPDATE_ON_START: "${ARXIV_UPDATE_ON_START:-0}"
+    volumes:
+      - arxiv-sanity-data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5000/stats', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5m
+
+  updater:
+    image: arxiv-sanity-lite:local
+    entrypoint: ["/app/docker-updater.sh"]
+    environment:
+      ARXIV_FETCH_NUM: "${ARXIV_UPDATE_FETCH_NUM:-2000}"
+      ARXIV_UPDATE_INTERVAL: "${ARXIV_UPDATE_INTERVAL:-86400}"
+    volumes:
+      - arxiv-sanity-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  arxiv-sanity-data:
